@@ -28,7 +28,6 @@ function getLinks(){
     blogType = "8";
   }
 
-
   if(blogType == 'old'){
     walkBlog('/blog.html');
   } else {
@@ -107,12 +106,7 @@ function processLinks(listElement){
 
   console.log(link);
 
-  if(blogType == "old"){
-    $("#output").load(link + " .content", function(){
-      text = text + getXMLOldDesign(link);
-      processLinks($(listElement).next('li'));
-    });
-  } else if(blogType == "new") {
+  if(blogType == "new") {
     $("#output").load(link + " #slot-main", function(){
       text = text + getXML(link);
 
@@ -130,7 +124,7 @@ function processLinks(listElement){
     });
   } else if (blogType == "5") {
     $("#output").load(link + " .main-content", function(){
-      text = text + getXML_5(link);
+      text = text + getXML(link);
       processLinks($(listElement).next('li'));
     });
   } else if (blogType == "6") {
@@ -151,17 +145,6 @@ function processLinks(listElement){
   }
 }
 
-function getXMLOldDesign(link) {
-  var title = $("#output #title").html();
-  link = link.replace(".edit.officite.com", "");
-  link = link.replace(".build.officite.com", "");
-  var description = $("#output #slot-main").html();
-  description = fixPictureLinks(description);
-  var date = getCurrentDate();
-  var text = "<item><title>" + title + "</title><link>" + link + "</link><description><![CDATA[" + description + "]]></description><pubDate>" + date + "</pubDate></item>";
-  return text;
-}
-
 function getCurrentDate() {
   var today = new Date();
   var dd = today.getDate();
@@ -179,46 +162,12 @@ function getXML(link) {
   link = link.replace(".build.officite.com", "");
   var description = $("#output .sbBlogPostContent").html();
   description = fixPictureLinks(description);
-  var date = $("#output .sbBlogPostPublishDate").html();
 
-  var categories = [];
-  var tags = [];
-
-  $('#output .sbBlogPostCategories > a').each(function(){
-    categories.push($(this).html());
-  });
-
-  $('#output .sbBlogPostTags > a').each(function(){
-    tags.push($(this).html());
-  });
-
-  var categoryText = '';
-  var tagText = '';
-
-  for(var i = 0; i < categories.length; i++){
-
-    if(categories[i] != "Uncategorized"){
-      categoryText = categoryText + '<category domain="category"><![CDATA[' + categories[i] + ']]></category>';
-    }
+  if($("#output .sbBlogPostPublishDate").length){
+    var date = $("#output .sbBlogPostPublishDate").html();
+  } else {
+    date = getCurrentDate();
   }
-
-  for(var i = 0; i < tags.length; i++){
-    if(tags[i] != "Untagged") {
-      tagText = tagText + '<category domain="post_tag"><![CDATA[' + tags[i] + ']]></category>';
-    }
-  }
-
-  var text = "<item><title>" + title + "</title><link>" + link + "</link><description><![CDATA[" + description + "]]></description><pubDate>" + date + "</pubDate>" + categoryText + tagText + "</item>";
-  return text;
-}
-
-function getXML_5(link) {
-  var title = $("#output .print-header").html();
-  link = link.replace(".edit.officite.com", "");
-  link = link.replace(".build.officite.com", "");
-  var description = $(".sbBlogPostContent").html();
-  description = fixPictureLinks(description);
-  var date = getCurrentDate();
   var categories = [];
   var tags = [];
 
@@ -261,5 +210,3 @@ function fixPictureLinks(contentText){
   return contentText;
 }
 /*---------------------End Blog XML converter code----------------*/
-
-
